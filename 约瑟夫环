@@ -1,0 +1,75 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define N 7
+
+int Pw[] = { 3,1,7,2,4,8,4 };
+int Num[] = { 1,2,3,4,5,6,7 };
+
+typedef struct LNode
+{
+	int password;
+	int num;
+	struct LNode *Next;
+}LNode, *Linklist;
+
+void Joseph(Linklist p, Linklist head, int *m)
+{
+	Linklist pre, q;
+	int i;
+
+	while (1)                                             //让循环一直执行直到游戏结束
+	{
+		if (p->Next == p)
+		{
+			printf("%d\n", p->num);
+			printf("The game is over.");
+			return;
+		}
+
+		for (i = 1; i < *m; i++)                            //p指向要删除的那一个人
+		{
+			p = p->Next;
+		}
+		printf("%d\t", p->num);
+
+		pre = p;
+		do
+		{
+			pre = pre->Next;
+		} while (pre->Next != p);                            //pre指向要删除的前一个人
+		//找到要删除的前一个人，这样可以避免for循环无法做到的密码为1的情况
+
+		*m = p->password;
+		q = p;
+		p = p->Next;
+		pre->Next = q->Next;
+		free(q);
+	}
+}
+int main()
+{
+	int i, m = 1;
+	Linklist p, q, Lhead;
+
+	for (i = 0; i < N; i++)
+	{
+		q = (Linklist)malloc(sizeof(LNode));
+		q->num = Num[i];
+		q->password = Pw[i];
+
+		if (0 == i)
+		{
+			Lhead = q;
+			p = q;
+		}
+		else
+		{
+			p->Next = q;
+			p = q;
+		}
+		q->Next = Lhead;                               //建立循环链表
+	}
+	p = Lhead;
+	Joseph(p, Lhead, &m);
+	return 0;
+}
